@@ -1,0 +1,100 @@
+<div id="form_meet_population"
+         data-district="{{ district }}"
+         data-districts='{{ districts | tojson | safe }}'
+     {% if page %}
+         data-path-photo='{{ path_photo | tojson | safe }}'
+     {% endif %}
+     style="overflow: auto" class="scroll-x-y">
+    <form class="irr-form" method="post" enctype="multipart/form-data">
+
+        {% if prot_num %}
+        <div class="form-row">
+            <label for="prot_num">{{ res_value('PROTOCOL_NUM') }}</label>
+            <input id="prot_num" style="font-size: 16px; background: inherit; border:none" type="text" name="prot_num" value="{{ prot_num }}" readonly>
+        </div>
+        {% endif %}
+
+        <div class="form-row">
+            <label for="date_irr">{{ res_value('MEET_DATE') }}</label>
+            <input id="date_irr" class="input_d" style="max-width: 132px" type="date" name="date_irr" value="{{ date_irr.strftime('%Y-%m-%d') if date_irr else '' }}" required>
+        </div>
+
+        <div class="form-row">
+            <label for="region-select">{{ res_value('SELECT_REGION') }}</label>
+            <select id="region-select" class="input_s" style="min-width: 274px" name="rfbn_id" value="{{ rfbn_id }}" required>
+                {% for code, region in regions.items() %}
+                <option value="{{ code[:2] }}"
+                        {% if code[:2] in rfbn_id %}selected{% endif %}>
+                    {{ region.legacy_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label for="district-select">{{ res_value('SELECT_RAYON') }}</label>
+            <select id="district-select" name="district" style="min-width: 444px" class="input_s hidden" required>
+                <option value="{{ district }}" selected hidden></option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label for="count-total">{{ res_value('COUNT_PARTICIPIENT') }}</label>
+            <input id="count-total" class="input_s" style="max-width: 80px" type="number" name="cnt_total" min="1" value="{{ cnt_total }}" required>
+        </div>
+
+        <div class="form-row">
+            <label for="count-women">{{ res_value('COUNT_WOMEN') }}</label>
+            <input id="count-women" class="input_s" style="max-width: 80px" type="number" name="cnt_women" min="0" value="{{ cnt_women }}" required>
+        </div>
+
+        <div class="form-row">
+            <label for="speaker-fio">{{ res_value('SPEAKER_FIO') }}</label>
+            <input id="speaker-fio" class="input_s" type="text" name="speaker" list="speakers" value="{{ speaker }}" required>
+        </div>
+
+        <div class="form-row">
+            <label for="meeting-format">{{ res_value('MEETING_FORMAT') }}</label>
+            <select id="meeting-format" class="input_s" style="max-width: 176px" name="meeting_format" required>
+                <option value="">{{ res_value('SELECT_FORMAT') }}</option>
+                <option value="offline" {% if "offline" in meeting_format %}selected{% endif %}>{{ res_value('ON_PLACE_FORMAT') }}</option>
+                <option value="online" {% if "online" in meeting_format %}selected{% endif %}>{{ res_value('ON_LINE_FORMAT') }}</option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label>{{ res_value('NAME_PARTNERS') }}</label>
+            <div style="display: flex; flex-direction: column; gap: 6px; border: 1px solid; max-width: 720px">
+                {% for partner in list_partners %}
+                <label>
+                    <input type="checkbox" name="partners" value="{{partner}}"
+                           {% if partner in partners %}checked{% endif %}>
+                    {{ partner }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label for="meeting-place">{{ res_value('MEETING_PLACE') }}</label>
+            <input id="meeting-place" class="input_s" style="min-width: 620px" type="text" name="meeting_place" value="{{ meeting_place }}" required>
+        </div>
+
+        <div class="form-row">
+            <span>{{ res_value('PHOTO_REPORT') }}</span>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="path_photo" class="button" style="max-width: 220px">
+                    📷 {{ res_value('PHOTO_SELECT') }}
+                </label>
+                <input type="file" id="path_photo" name="path_photo" accept="image/*" multiple hidden>
+                <div id="photo-file-names" class="file-names"></div>
+            </div>
+        </div>
+
+        <div class="form-row form-actions">
+            <button type="submit">{{ res_value('BUTTON_SAVE') }}</button>
+            <pre style="white-space: pre-line; padding: 0px; margin: 0px; font-weight: bold; font-size: 14px; line-height: 0.8; color: green">{{ message }}</pre>
+        </div>
+
+    </form>
+</div>

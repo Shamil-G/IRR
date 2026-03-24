@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ res_value('lang, FIRST_PAGE') }}
+{% endblock %}
+
+{% block body %}
+<div class="title_message">
+    {% if messages %}
+    <ul class="flashes" style="margin: 0">
+        {% for msg in messages %}
+        <li class="td_value_bold"> {{ msg }} </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endblock %}

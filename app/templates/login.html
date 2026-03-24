@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ res_value('LOGIN_PAGE') }}
+{% endblock %}
+
+{% block main_title %}
+{{ res_value('LOGIN_PAGE') }}
+{% endblock %}
+
+{% block body %}
+<!--<div class="title_message">
+    {% if messages %}
+    <ul class="flashes" style="margin: 0">
+        {% for msg in messages %}
+        <li class="td_value_bold"> {{ msg }} </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>-->
+<form class="form_login" method="POST" action="/login">
+    <div>
+        <input style="margin-left: 0px" class="input_s" name="username" type="text" placeholder="{{res_value('LOGIN_INFO')}}" autocomplete="username">
+    </div>
+    <div style="margin-top: 9px">
+        <input style="margin-left: 0px" class="input_s" type="password" name="password" placeholder="{{res_value('PASSWORD_INFO')}}">
+    </div>
+    <button style="margin-top: 16px" type="submit">{{ res_value('LOGIN_BUTTON') }}</button>
+    <div style="margin-top: 24px;">
+        {% if info %}
+        <a style="font-size: 19px; font-weight: bold;">{{ info }}</a>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}

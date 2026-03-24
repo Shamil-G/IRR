@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ res_value('INFO_RADIO') }}
+{% endblock %}
+
+{% block main_title %}
+<div id="tab-panel" class="tabs" data-zone="tabs" data-zone-name="radio">
+
+    <a href="{{ url_for('radio_form') }}"
+       class="button tab {% if active_tab == 'form' %}active{% endif %}">
+        {{ res_value('INFO_RADIO') }}
+    </a>
+
+    <a href="{{ url_for('radio_protocol') }}"
+       class="button tab {% if active_tab == 'protocol' %}active{% endif %}">
+        {{ res_value('INFO_PROTOCOL') }}
+    </a>
+</div>
+{% endblock %}
+
+{% block body %}
+<div id="contentTab" class="scroll-x-y" style="overflow: auto; height: 100%; width: 100%">
+    {% if active_tab == 'form' %}
+        {% include 'radio/form_radio_content.html' %}
+    {% elif active_tab == 'protocol' %}
+        {% include 'radio/protocol_radio_content.html' %}
+        <script type="module" data-page="listProtocols" src="/static/js/pages/radio/radio.js"></script>
+    {% endif %}
+</div>
+{% endblock %}

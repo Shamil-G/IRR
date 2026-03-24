@@ -1,0 +1,56 @@
+<form class="irr-form"
+      method="POST"
+      action="/open_door/form"
+      style="grid-template-columns: 360px 1fr;" enctype="multipart/form-data">
+
+    {% if prot_num %}
+    <div class="form-row">
+        <label for="prot_num">{{ res_value('PROTOCOL_NUM') }}</label>
+        <input id="event_date" style="font-size: 16px; background: inherit; border:none" type="text" name="prot_num" value="{{ prot_num }}" readonly>
+    </div>
+    {% endif %}
+
+    <div class="form-row">
+        <label for="event_date">{{ res_value('EVENT_DATE') }}</label>
+        <input id="event_date" class="input_d" style="max-width: 132px" type="date" name="event_date" value="{{ event_date.strftime('%Y-%m-%d') if event_date else '' }}" required>
+    </div>
+
+    <div class="form-row">
+        <label for="region-select">{{ res_value('SELECT_REGION') }}</label>
+        <select id="region-select" class="input_s" style="min-width: 274px" name="rfbn_id" value="{{ rfbn_id }}" required>
+            {% for code, region in regions.items() %}
+            <option value="{{ code[:2] }}"
+                    {% if rfbn_id and code[:2] in rfbn_id %}selected{% endif %}>
+                {{ region.legacy_name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="participants">{{ res_value('PARTICIPANTS_MEET') }}</label>
+        <input id="participants" class="input_s" type="text" name="participants" style="min-width: 880px" value="{{ participants }}" required>
+    </div>
+
+    <div class="form-row">
+        <label for="smi">{{ res_value('PARTICIPANTS_SMI') }}</label>
+        <input id="smi" class="input_s" type="text" name="smi" value="{{ smi }}" required>
+    </div>
+
+    <div class="form-row">
+        <label for="event_place">{{ res_value('EVENT_PLACE') }}</label>
+        <input id="event_place" class="input_s" type="text" name="event_place" style="min-width: 640px" value="{{ event_place }}" required>
+    </div>
+
+
+    <div class="form-row">
+        <label for="refer" style="white-space: normal; word-wrap: break-word; overflow-wrap: break-word; ">{{ res_value('REFER') }}</label>
+        <input id="refer" class="input_s" type="text" name="refer" style="min-width: 880px" value="{{ refer }}">
+    </div>
+
+    <div class="form-row form-actions" style="display: contents">
+        <button type="submit" style="justify-self: center; width: auto; padding: 8px 32px; margin-top: 10px">{{ res_value('BUTTON_SAVE') }}</button>
+        <span class="save-message" style="white-space: pre-line; padding: 0px; margin: 0px; font-weight: bold; font-size: 16px; line-height: 0.8; color: green">{{ message }}</span>
+    </div>
+
+</form>

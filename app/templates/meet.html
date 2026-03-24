@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ res_value('INFO_LIST_PROTOCOLS') }}
+{% endblock %}
+
+{% block main_title %}
+<div id="tab-panel" class="tabs" data-zone="tabs" data-zone-name="radio">
+
+    <a href="{{ url_for('meet_labor_form') }}"
+       class="button tab {% if active_tab == 'form_labor' %}active{% endif %}">
+        {{ res_value('MEET_LABOR') }}
+    </a>
+
+    <a href="{{ url_for('meet_population_form') }}"
+       class="button tab {% if active_tab == 'form_population' %}active{% endif %}">
+        {{ res_value('MEET_POPULATION') }}
+    </a>
+
+    <a href="{{ url_for('meet_protocol') }}"
+       class="button tab {% if active_tab == 'protocol' %}active{% endif %}">
+        {{ res_value('INFO_PROTOCOL') }}
+    </a>
+</div>
+{% endblock %}
+
+{% block body %}
+<div id="contentTab" class="scroll-x-y" style="overflow: auto; height: 100%; width: 100%">
+    {% if active_tab == 'form_labor' %}
+        {% include 'meet/form_meet_labor_content.html' %}
+        <script type="module" data-page="laborFormContent" src="/static/js/pages/meet/meet_labor.js"></script>
+    {% elif active_tab == 'form_population' %}
+        {% include 'meet/form_meet_population_content.html' %}
+        <script type="module" data-page="populationFormContent" src="/static/js/pages/meet/meet_population.js"></script>
+    {% elif active_tab == 'protocol' %}
+        {% include 'meet/protocol_meet_content.html' %}
+        <script type="module" data-page="protocolContent" src="/static/js/pages/meet/protocol.js"></script>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}
+{{ res_value('LIST_PROTOCOLS') }}
+{% endblock %}
+
+{% block main_title %}
+<span style="font-weight: bold">{{ res_value('LIST_PROTOCOLS') }}</span>
+{% endblock %}
+
+{% block body %}
+<div style="display: flex; padding: 4px 0px 4px 10px; align-items: center; font-size: 18px;">
+    <div data-zone="protocol">
+        <div style="position: relative; display: inline-block;">
+            <input type="month"
+                   name="date_protocol"
+                   class="button"
+                   data-role="save-change-form"
+                   data-target-id="zoneTableProtocol"
+                   style="padding: 4px 10px; font-weight: bold; appearance: none; -webkit-appearance: none;">
+            <span style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #666; pointer-events: none;"><i class="fas fa-calendar-alt"></i></span>
+        </div>
+    </div>
+    <a class="button" href="/get_protocol_excel"
+       style="margin-left: 16px; font-weight: bold;">
+        <i class="fas fa-print"></i>
+        {{ res_value('EXCEL') }}
+    </a>
+</div>
+<hr style="border: none; border-top: 1px solid #ccc; margin: 1px 0;">
+<div id="zoneTableProtocol" style="overflow: auto" class="scroll-x-y"></div>
+<script type="module" data-page="listProtocols" src="/static/js/protocol.js"></script>
+{% endblock %}

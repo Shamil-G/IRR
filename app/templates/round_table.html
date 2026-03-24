@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ res_value('INFO_ROUND_TABLE') }}
+{% endblock %}
+
+{% block main_title %}
+<div id="tab-panel" class="tabs" data-zone="tabs" data-zone-name="round_table">
+
+    <a href="{{ url_for('round_table_form') }}"
+       class="button tab {% if active_tab == 'form' %}active{% endif %}">
+        {{ res_value('INFO_RADIO') }}
+    </a>
+
+    <a href="{{ url_for('round_table_protocol') }}"
+       class="button tab {% if active_tab == 'protocol' %}active{% endif %}">
+        {{ res_value('INFO_PROTOCOL') }}
+    </a>
+</div>
+{% endblock %}
+
+{% block body %}
+<div id="contentTab" class="scroll-x-y" style="overflow: auto; height: 100%; width: 100%">
+    {% if active_tab == 'form' %}
+    {% include 'round_table/form_round_table_content.html' %}
+    {% elif active_tab == 'protocol' %}
+    {% include 'round_table/protocol_round_table_content.html' %}
+    <script type="module" data-page="roundTablePage" src="/static/js/pages/round_table/round_table.js"></script>
+    {% endif %}
+</div>
+{% endblock %}

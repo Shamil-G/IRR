@@ -11,6 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>IRR</Name>
     <RootNamespace>IRR</RootNamespace>
+    <InterpreterId>MSBuild|venv|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +22,169 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="app\api\app_config.py" />
+    <Compile Include="app\auth\dependencies.py" />
+    <Compile Include="app\auth\login_routes.py" />
+    <Compile Include="app\config\app_config.py" />
+    <Compile Include="app\config\db_config.py" />
+    <Compile Include="app\config\gfss_parameter.py" />
+    <Compile Include="app\core\inject_template.py" />
+    <Compile Include="app\models\irr_functions.py" />
+    <Compile Include="app\models\open_door_functions.py" />
+    <Compile Include="app\models\radio_functions.py" />
+    <Compile Include="app\models\round_table_functions.py" />
+    <Compile Include="app\models\smi_functions.py" />
+    <Compile Include="app\reports\report_meet_01.py" />
+    <Compile Include="app\reports\report_open_door_01.py" />
+    <Compile Include="app\reports\report_radio_01.py" />
+    <Compile Include="app\reports\report_round_table_01.py" />
+    <Compile Include="app\reports\report_smi_01.py" />
+    <Compile Include="app\routes\meet_labor_route.py" />
+    <Compile Include="app\routes\meet_population_route.py" />
+    <Compile Include="app\routes\root_route.py" />
+    <Compile Include="app\util\functions.py" />
+    <Compile Include="app\core\i18n.py" />
+    <Compile Include="app\core\ip_addr.py" />
+    <Compile Include="app\core\logger.py" />
+    <Compile Include="app\util\regions.py" />
+    <Compile Include="app\util\trunc_date.py" />
+    <Compile Include="app\db\connect.py" />
+    <Compile Include="app\routes\common_route.py" />
+    <Compile Include="app\routes\__init__.py" />
+    <Compile Include="app\routes\meet_route.py" />
+    <Compile Include="app\routes\open_door_route.py" />
+    <Compile Include="app\routes\radio_route.py" />
+    <Compile Include="app\routes\round_table_route.py" />
+    <Compile Include="app\routes_old.py" />
+    <Compile Include="app\routes\smi_route.py" />
+    <Compile Include="app\auth\sso_user.py" />
+    <Compile Include="app\sso\user_login_sso.py" />
     <Compile Include="IRR.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="app\" />
+    <Folder Include="app\api\" />
+    <Folder Include="app\models\" />
+    <Folder Include="app\core\" />
+    <Folder Include="app\db\" />
+    <Folder Include="app\auth\" />
+    <Folder Include="app\config\" />
+    <Folder Include="app\logs\" />
+    <Folder Include="app\locale\" />
+    <Folder Include="app\spool\" />
+    <Folder Include="app\reports\" />
+    <Folder Include="app\static\" />
+    <Folder Include="app\static\css\" />
+    <Folder Include="app\static\js\" />
+    <Folder Include="app\static\img\" />
+    <Folder Include="app\static\js\binders\" />
+    <Folder Include="app\static\js\core\" />
+    <Folder Include="app\static\js\functions\" />
+    <Folder Include="app\static\js\pages\" />
+    <Folder Include="app\static\js\pages\meet\" />
+    <Folder Include="app\static\js\pages\meet\binders\" />
+    <Folder Include="app\static\js\pages\open_door\" />
+    <Folder Include="app\static\js\pages\open_door\binders\" />
+    <Folder Include="app\static\js\pages\print_smi\" />
+    <Folder Include="app\static\js\pages\print_smi\binders\" />
+    <Folder Include="app\static\js\pages\radio\" />
+    <Folder Include="app\static\js\pages\radio\binders\" />
+    <Folder Include="app\static\js\pages\round_table\" />
+    <Folder Include="app\static\js\pages\round_table\binders\" />
+    <Folder Include="app\templates\meet\" />
+    <Folder Include="app\templates\print_smi\" />
+    <Folder Include="app\templates\radio\" />
+    <Folder Include="app\templates\round_table\" />
+    <Folder Include="app\templates\open_door\" />
+    <Folder Include="app\util\" />
+    <Folder Include="app\templates\" />
+    <Folder Include="app\sso\" />
+    <Folder Include="app\routes\" />
+    <Folder Include="app\services\" />
+    <Folder Include="venv\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="venv\">
+      <Id>venv</Id>
+      <Version>3.14</Version>
+      <Description>venv (Python 3.14 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="app\locale\i18n.kz" />
+    <Content Include="app\locale\i18n.ru" />
+    <Content Include="app\main.py" />
+    <Content Include="app\static\css\styles.css" />
+    <Content Include="app\static\img\bg.jpg" />
+    <Content Include="app\static\img\color-icon.png" />
+    <Content Include="app\static\img\dark-icon.png" />
+    <Content Include="app\static\img\icons8-approve-48.png" />
+    <Content Include="app\static\img\icons8-black-white-24.png" />
+    <Content Include="app\static\img\icons8-black-white-50.png" />
+    <Content Include="app\static\img\icons8-color-48.png" />
+    <Content Include="app\static\img\icons8-delete-48.png" />
+    <Content Include="app\static\img\icons8-fix-48.png" />
+    <Content Include="app\static\img\logo-g.ico" />
+    <Content Include="app\static\img\logo.ico" />
+    <Content Include="app\static\img\ok.png" />
+    <Content Include="app\static\js\binders\submitFormBinder.js" />
+    <Content Include="app\static\js\core\ContextRegistry.js" />
+    <Content Include="app\static\js\core\FragmentLoader.js" />
+    <Content Include="app\static\js\core\initTabs.js" />
+    <Content Include="app\static\js\core\tabSwitchBinder.js" />
+    <Content Include="app\static\js\core\base.js" />
+    <Content Include="app\static\js\functions\meet.js" />
+    <Content Include="app\static\js\functions\setTheme.js" />
+    <Content Include="app\static\js\pages\meet\binders\saveChangeFormBinder.js" />
+    <Content Include="app\static\js\pages\meet\binders\setActionBinder.js" />
+    <Content Include="app\static\js\pages\meet\ctxState.js" />
+    <Content Include="app\static\js\pages\meet\meet_labor.js" />
+    <Content Include="app\static\js\pages\meet\meet_population.js" />
+    <Content Include="app\static\js\pages\meet\protocol.js" />
+    <Content Include="app\static\js\pages\open_door\binders\saveChangeFormBinder.js" />
+    <Content Include="app\static\js\pages\open_door\binders\setActionBinder.js" />
+    <Content Include="app\static\js\pages\open_door\ctxState.js" />
+    <Content Include="app\static\js\pages\open_door\open_door.js" />
+    <Content Include="app\static\js\pages\print_smi\binders\saveChangeFormBinder.js" />
+    <Content Include="app\static\js\pages\print_smi\binders\setActionBinder.js" />
+    <Content Include="app\static\js\pages\print_smi\ctxState.js" />
+    <Content Include="app\static\js\pages\print_smi\print_smi.js" />
+    <Content Include="app\static\js\pages\radio\binders\saveChangeFormBinder.js" />
+    <Content Include="app\static\js\pages\radio\binders\setActionBinder.js" />
+    <Content Include="app\static\js\pages\radio\ctxState.js" />
+    <Content Include="app\static\js\pages\radio\radio.js" />
+    <Content Include="app\static\js\pages\round_table\binders\saveChangeFormBinder.js" />
+    <Content Include="app\static\js\pages\round_table\binders\setActionBinder.js" />
+    <Content Include="app\static\js\pages\round_table\ctxState.js" />
+    <Content Include="app\static\js\pages\round_table\round_table.js" />
+    <Content Include="app\templates\base.html" />
+    <Content Include="app\templates\form_meet_labor_content.html" />
+    <Content Include="app\templates\form_meet_population_content.html" />
+    <Content Include="app\templates\index.html" />
+    <Content Include="app\templates\list_protocols_old.html" />
+    <Content Include="app\templates\login.html" />
+    <Content Include="app\templates\meet.html" />
+    <Content Include="app\templates\meet\form_meet_labor_content.html" />
+    <Content Include="app\templates\meet\form_meet_population_content.html" />
+    <Content Include="app\templates\meet\protocol_meet_content.html" />
+    <Content Include="app\templates\open_door.html" />
+    <Content Include="app\templates\open_door\form_open_door_content.html" />
+    <Content Include="app\templates\open_door\protocol_open_door_content.html" />
+    <Content Include="app\templates\print_smi.html" />
+    <Content Include="app\templates\print_smi\form_print_smi_content.html" />
+    <Content Include="app\templates\print_smi\protocol_print_smi_content.html" />
+    <Content Include="app\templates\protocol_meet_content.html" />
+    <Content Include="app\templates\radio.html" />
+    <Content Include="app\templates\radio\form_radio_content.html" />
+    <Content Include="app\templates\radio\protocol_radio_content.html" />
+    <Content Include="app\templates\round_table.html" />
+    <Content Include="app\templates\round_table\form_round_table_content.html" />
+    <Content Include="app\templates\round_table\protocol_round_table_content.html" />
+    <Content Include="app\test.tx" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
