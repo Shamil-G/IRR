@@ -1,5 +1,5 @@
 [Unit]
-Description=COURT-2025
+Description=IRR-2025
 After=network.target
 
 [Service]
@@ -9,6 +9,8 @@ Group=irr
 WorkingDirectory=/home/irr/IRR
 Environment="PATH=/home/irr/IRR/venv/bin" "LD_LIBRARY_PATH=/home/oracle/client/21.3/lib" "ORACLE_HOME=/home/oracle/client/21.3"
 ExecStart=/home/irr/IRR/venv/bin/gunicorn
+#ExecStart=/home/irr/IRR/venv/bin/uvicorn app.main:app --host 192.168.1.34 --port 50991
+#ExecStart=/home/irr/IRR/venv/bin/uvicorn app.main:app --host localhost --port 50991
 
 [Install]
 WantedBy=multi-user.target

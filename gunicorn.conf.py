@@ -3,6 +3,7 @@ from app.config.gfss_parameter import app_home, app_name
 from app.config.app_config import port
 
 bind = f"localhost:{port}"
+#bind = f"192.168.1.34:{port}"
 workers = multiprocessing.cpu_count()
 
 worker_class = "uvicorn.workers.UvicornWorker"

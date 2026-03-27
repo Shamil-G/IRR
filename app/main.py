@@ -108,7 +108,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 log.info(f'Static BASE_DIR: {BASE_DIR}')
-app.mount("/static", StaticFiles(directory=f'{BASE_DIR}/static'), name="static")
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 
 # ---------------------------------------------------------
 # 5. Routers with prefixes & tags
