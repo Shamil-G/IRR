@@ -3,7 +3,7 @@ from configparser import ConfigParser
 
 styles = ['color','dark']
 
-port=50991
+port=5099
 host='localhost'
 LOG_PATH = "logs"
 #URL_LOGIN = 'http://192.168.1.34:8000'
