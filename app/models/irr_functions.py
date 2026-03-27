@@ -34,7 +34,7 @@ def get_partners():
     records = select(stmt, args) 
     list_value = [item['value'] for item in records]
         
-    log.info(f'GET PARTNERS. RESULT: {list_value}')
+    log.debug(f'GET PARTNERS. RESULT: {list_value}')
     return list_value
 
 
@@ -75,7 +75,7 @@ def update_protocol(data: dict):
                                 :category, :partners, :speaker, :employee,
                                 :meeting_place, :path_photo); end;
     """
-    log.info(f'UPDATE_PROTOCOL: {len(data)} : {data}')
+    log.debug(f'UPDATE_PROTOCOL: {len(data)} : {data}')
     data['date_irr']=datetime.strptime(data['date_irr'], "%Y-%m-%d").date()
 
     if 'bin' not in data:
@@ -140,6 +140,6 @@ def load_protocol(prot_num):
     result = select_one(stmt, params)
     for key, value in result.items(): 
         if value is None: result[key] = ''
-    log.info(f'--->\n\tLOAD PROTOCOL:\n\tRESULT: {result}\n<---')
+    log.debug(f'--->\n\tLOAD PROTOCOL:\n\tRESULT: {result}\n<---')
     return result
 

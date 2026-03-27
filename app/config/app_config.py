@@ -1,4 +1,4 @@
-from app.config.gfss_parameter import BASE
+from app.config.gfss_parameter import BASE, platform
 from configparser import ConfigParser
 
 styles = ['color','dark']
@@ -13,8 +13,10 @@ language = 'ru'
 REPORT_PATH='reports/'
 UPLOAD_DIR='uploads'
 
-tester = {'login_name': 'Гусейнов', 'rfbn_id': '1600', 'top_level': 2, 'top_view': 0} 
-#tester = {} 
+
+tester = {} 
+if platform!='unix':
+    tester = {'login_name': 'Гусейнов', 'rfbn_id': '1600', 'top_level': 2, 'top_view': 0} 
 
 permit_post = ['Специалист', 'Главный специалист', 'Юрист', 'Внештатный работник',  ]
 
