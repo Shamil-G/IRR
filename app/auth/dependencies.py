@@ -16,20 +16,20 @@ def try_auto_login(request: Request):
     req_json = {"ip_addr": ip}
     resp = requests.post(f"{sso_server}/check", json=req_json)
 
-    log.debug(f"LOGIN CHECK → {resp}")
+    log.info(f"LOGIN CHECK → {resp}")
 
     if resp.status_code != 200:
         return False
 
     resp_json = resp.json()
-    log.debug(f"LOGIN GET. resp_json: {resp_json}")
+    log.info(f"LOGIN GET. resp_json: {resp_json}")
 
     if resp_json.get("status") != 200:
         log.info(f"Try auto login → USER {ip_addr(request)} not registered")
         return False
 
     json_user = resp_json["user"]
-    log.debug(f"LOGIN GET. json_user: {json_user}")
+    log.info(f"LOGIN GET. json_user: {json_user}")
 
     # request.session["username"] = json_user["login_name"]
 
@@ -41,7 +41,7 @@ def try_auto_login(request: Request):
 
     request.state.user = user
 
-    log.debug(f"Try auto login → USER IP {ip}: {request.session}")
+    log.info(f"SUCCESS. Try auto login → USER IP {ip}: {request.session}")
     return True
 
 
@@ -59,6 +59,7 @@ def login_required(request: Request):
         log.info(f'---> login_required. USERNAME not in SESSION: {session}')
         status = try_auto_login(request)
         if not status:
+            log.info(f'---> login_required. try_auto_login: {status}')
             raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
 
     return request.state.user
