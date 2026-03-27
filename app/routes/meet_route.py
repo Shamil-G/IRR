@@ -1,6 +1,7 @@
 from fastapi import APIRouter, UploadFile, Request, Depends, Form, File, Query
 from fastapi.responses import RedirectResponse, HTMLResponse
 from starlette.status import HTTP_302_FOUND
+from urllib.parse import urlencode
 import json
 from typing import List
 from datetime import datetime
@@ -34,29 +35,20 @@ def meet_report(request: Request, user=Depends(login_required)):
 
 
 @router.api_route('/meet/action', methods=['GET','POST'])
-def view_protocol_action(request: Request, user=Depends(login_required)):
-    data = extract_payload(request)
-    
-    if data.get('action')=='edit' and data.get('page')=='labor':
-        log.debug(f'--->\nMEET ACTION. LABOR. data: {data}\n<---')
-        # URL_FOR принимает только распаковнные параметры
-        # Поэтому распаковка идет через **data 
-        return RedirectResponse(
-            url=request.url_for("view_form_meet_labor", **data),
-            status_code=HTTP_302_FOUND
-        )
-    if data.get('action')=='edit' and data.get('page')=='population':
-        log.debug(f'--->\nMEET ACTION. POPULATION. data: {data}\n<---')
-        return RedirectResponse(
-            url=request.url_for("view_form_meet_population", **data),
-            status_code=HTTP_302_FOUND
-        )
+async def view_protocol_action(request: Request, user=Depends(login_required)):
+    data = await extract_payload(request)
 
-    args = {'action': data['action'], 'prot_num': data['prot_num'], 'top_level': g.user.top_level}
+    if data.get('action')=='edit':
+        base = request.url_for(f"meet_{data.get('page')}_form")
+        query = urlencode(data)
+        log.debug(f'--->\nMEET ACTION. POPULATION. query: {query}\n<---')
+        return RedirectResponse(f"{base}?{query}", status_code=302)
+
+    args = {'action': data['action'], 'prot_num': data['prot_num'], 'top_level': user.top_level}
     set_action('VIEW ACTION', 'begin manage.set_action(:action, :prot_num, :top_level); end;', args);
 
     return RedirectResponse(
-        url=request.url_for("view_meet_protocol"),
+        url=request.url_for("meet_protocol"),
         status_code=HTTP_302_FOUND
     )
 

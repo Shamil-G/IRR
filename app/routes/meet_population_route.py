@@ -1,6 +1,7 @@
 from fastapi import APIRouter, UploadFile, Request, Depends, Form, File, Query
 from fastapi.responses import RedirectResponse, HTMLResponse
 from starlette.status import HTTP_302_FOUND
+from urllib.parse import quote, unquote
 import json
 from typing import List
 from datetime import datetime, date
@@ -40,6 +41,7 @@ def view_form_meet_population_get(
 ):
     form = {
         "prot_num": prot_num,
+        "date_irr": date_irr or date.today(),
         "rfbn_id": rfbn_id or user.rfbn_id,
         "district": district,
         "cnt_total": cnt_total,
@@ -48,27 +50,16 @@ def view_form_meet_population_get(
         "meeting_format": meeting_format,
         "meeting_place": meeting_place,
     }
-    if date_irr:
-        try:
-            form['date_irr'] = datetime.strptime(date_irr, "%Y-%m-%d").date()
-        except:
-            form['date_irr'] = None
-    else:
-        form['date_irr'] = date.today()
-
     if partners:
         try:
-            form['partners'] = json.loads(form['partners'])
-        except:
-            form['partners'] = get_partners()
+            form["partners"] = json.loads(unquote(partners))
+        except Exception as e:
+            log.error(f"PARTNERS PARSE ERROR: {e}")
+            form["partners"] = []
+    else:
+        form["partners"] = []
 
-    if path_photo:
-        try:
-            form['path_photo'] = json.loads(form['path_photo'])
-        except:
-            form['path_photo'] = []
-
-    log.info(f'MEET LABOR. GET. data: {form}')
+    log.debug(f'MEET LABOR. GET. data: {form}')
 
     return request.app.state.templates.TemplateResponse(
         'meet.html',
@@ -105,29 +96,22 @@ async def view_form_meet_population_post(
     path_photo: List[UploadFile] = File([]),
 ):
     message = ""
+    real_name_photos = [p for p in path_photo if p.filename]
 
     # -----------------------------
-    # 1. ВАЛИДАЦИЯ
+    # 1. ВАЛИДАЦИЯ только для новых
     # -----------------------------
-    if len(partners) < 1:
+    if not prot_num:
+       if len(partners) < 1:
         message += "Необходимо выбрать не менее чем одну организацию-партнера. "
 
-    if not bin and not organization_name:
-        message += "Необходимо выбрать БИН организации. "
-
-    real_photos = [p for p in path_photo if p.filename]
-    if not prot_num and not real_photos:
-        message += "Необходимо выбрать не менее 1 файла."
+        if not real_name_photos:
+            message += "Необходимо выбрать не менее 1 файла."
 
     # -----------------------------
     # 2. Ошибки → вернуть форму
     # -----------------------------
     if message:
-        try:
-            date_irr_date = datetime.strptime(date_irr, "%Y-%m-%d").date()
-        except:
-            date_irr_date = None
-
         return request.app.state.templates.TemplateResponse(
             'meet.html',
             {
@@ -140,7 +124,7 @@ async def view_form_meet_population_post(
 
                 # Возвращаем данные формы
                 "prot_num": prot_num,
-                "date_irr": date_irr_date,
+                "date_irr": date_irr,
                 "rfbn_id": rfbn_id,
                 "district": district,
                 "cnt_total": cnt_total,
@@ -156,21 +140,22 @@ async def view_form_meet_population_post(
     # -----------------------------
     # 3. Подготовка данных
     # -----------------------------
-    try:
-        date_irr_date = datetime.strptime(date_irr, "%Y-%m-%d").date()
-    except:
-        date_irr_date = None
+    # try:
+    #     date_irr_date = datetime.strptime(date_irr, "%Y-%m-%d").date()
+    # except:
+    #     date_irr_date = None
 
     partners_json = json.dumps(partners, ensure_ascii=False)
+    partners_encoded = quote(partners_json)   
 
     photo_names = []
-    if real_photos:
-        photo_names = upload_files(rfbn_id, real_photos)
+    if real_name_photos:
+        photo_names = await upload_files(rfbn_id, real_name_photos)
 
     path_photo_json = json.dumps(photo_names, ensure_ascii=False)
 
     db_data = {
-        "date_irr": date_irr_date,
+        "date_irr": date_irr,
         "rfbn_id": rfbn_id,
         "district": district,
         "cnt_total": cnt_total,
@@ -179,7 +164,7 @@ async def view_form_meet_population_post(
         "meeting_format": meeting_format,
         "partners": partners_json,
         "meeting_place": meeting_place,
-        "path_photo": path_photo_json,
+        "path_photo": path_photo_json if len(real_name_photos)>0 else None,
         "employee": user.fio,
     }
 
@@ -203,13 +188,10 @@ async def view_form_meet_population_post(
         f"date_irr={date_irr}&"
         f"rfbn_id={rfbn_id}&"
         f"district={district}&"
-        f"cnt_total={cnt_total}&"
-        f"cnt_women={cnt_women}&"
         f"speaker={speaker}&"
         f"meeting_format={meeting_format}&"
-        f"partners={partners_json}&"
-        f"meeting_place={meeting_place}&"
-        f"path_photo={path_photo_json}"
+        f"partners={partners_encoded}&"
+        f"meeting_place={meeting_place}"
     )
 
     return RedirectResponse(url=url, status_code=303)

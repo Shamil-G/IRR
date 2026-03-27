@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Request, Form
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi import Query
 from urllib.parse import urlencode
+from datetime import date
 
 from app.auth.dependencies import login_required
 from app.core.logger import log
@@ -39,7 +40,7 @@ def view_print_smi_action_get(
 
     params = {
         "prot_num": prot_num,
-        "event_date": event_date,
+        "event_date": event_date or date.today(),
         "rfbn_id": rfbn_id,
         "name": name,
         "smi_name": smi_name,
@@ -74,6 +75,9 @@ def view_print_smi_action_post(
     return RedirectResponse( url=request.url_for("print_smi_protocol"), status_code=303 )
 
 
+##########################
+# GET
+##########################
 @router.get('/print_smi/form', response_class=HTMLResponse, name="print_smi_form", dependencies=[Depends(login_required)])
 async def view_form_print_smi_get(
     request: Request,
@@ -88,7 +92,7 @@ async def view_form_print_smi_get(
     # Собираем данные формы
     form = {
         "prot_num": prot_num,
-        "event_date": event_date,
+        "event_date": event_date or date.today(),
         "rfbn_id": rfbn_id,
         "smi_name": smi_name,
         "description": description,

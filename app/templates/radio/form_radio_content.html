@@ -12,7 +12,7 @@
 
     <div class="form-row">
         <label for="event_date">{{ res_value('EVENT_DATE') }}</label>
-        <input id="event_date" class="input_d" style="max-width: 132px" type="date" name="event_date" value="{{ event_date.strftime('%Y-%m-%d') if event_date else '' }}" required>
+        <input id="event_date" class="input_d" style="max-width: 132px" type="date" name="event_date" value="{{ event_date }}" required>
     </div>
 
     <div class="form-row">

@@ -5,11 +5,9 @@ export const SetActionBinder = {
         if (zone.__roleSetActionBound) return;
         zone.__roleSetActionBound = true;
 
-        console.log('SetActionBinder. ATTACH ALL');
-
         zone.addEventListener('click', (e) => {
             const btn = e.target.closest(`[data-role="${this.role}"]`);
-            console.log('SetActionBinder. addEventListener click. ZONE: ', zone, '\nBTN: ', btn);
+            //console.log('SetActionBinder. addEventListener click. ZONE: ', zone, '\nBTN: ', btn);
             if (!btn) return;
 
             e.preventDefault();
@@ -39,13 +37,13 @@ export const SetActionBinder = {
                 params.set('description', description);
             }
 
-            console.log('SetActionBinder. params: ', params);
+            //console.log('SetActionBinder. params: ', params);
 
             if (action === 'edit') {
-                console.log('SetActionBinder. EDIT. ACTION: ', action, ', params: ', params);
+                //console.log('SetActionBinder. EDIT. ACTION: ', action, ', params: ', params);
                 window.location.href = `/radio/action?${params.toString()}`;
             } else {
-                console.log('SetActionBinder. POST. ACTION: ', action, ', params: ', params);
+                //console.log('SetActionBinder. POST. ACTION: ', action, ', params: ', params);
                 fetch('/radio/action', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

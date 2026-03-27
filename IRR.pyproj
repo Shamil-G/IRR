@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>4e21c28f-206d-44b5-b8f1-e61232486261</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>IRR.py</StartupFile>
+    <StartupFile>app\run.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,7 +22,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="app\api\app_config.py" />
     <Compile Include="app\auth\dependencies.py" />
     <Compile Include="app\auth\login_routes.py" />
     <Compile Include="app\config\app_config.py" />
@@ -42,6 +41,7 @@
     <Compile Include="app\routes\meet_labor_route.py" />
     <Compile Include="app\routes\meet_population_route.py" />
     <Compile Include="app\routes\root_route.py" />
+    <Compile Include="app\run.py" />
     <Compile Include="app\util\functions.py" />
     <Compile Include="app\core\i18n.py" />
     <Compile Include="app\core\ip_addr.py" />
@@ -55,7 +55,6 @@
     <Compile Include="app\routes\open_door_route.py" />
     <Compile Include="app\routes\radio_route.py" />
     <Compile Include="app\routes\round_table_route.py" />
-    <Compile Include="app\routes_old.py" />
     <Compile Include="app\routes\smi_route.py" />
     <Compile Include="app\auth\sso_user.py" />
     <Compile Include="app\sso\user_login_sso.py" />
@@ -92,6 +91,7 @@
     <Folder Include="app\static\js\pages\round_table\" />
     <Folder Include="app\static\js\pages\round_table\binders\" />
     <Folder Include="app\templates\meet\" />
+    <Folder Include="app\templates\errors\" />
     <Folder Include="app\templates\print_smi\" />
     <Folder Include="app\templates\radio\" />
     <Folder Include="app\templates\round_table\" />
@@ -131,14 +131,12 @@
     <Content Include="app\static\img\logo-g.ico" />
     <Content Include="app\static\img\logo.ico" />
     <Content Include="app\static\img\ok.png" />
-    <Content Include="app\static\js\binders\submitFormBinder.js" />
     <Content Include="app\static\js\core\ContextRegistry.js" />
     <Content Include="app\static\js\core\FragmentLoader.js" />
     <Content Include="app\static\js\core\initTabs.js" />
     <Content Include="app\static\js\core\tabSwitchBinder.js" />
     <Content Include="app\static\js\core\base.js" />
     <Content Include="app\static\js\functions\meet.js" />
-    <Content Include="app\static\js\functions\setTheme.js" />
     <Content Include="app\static\js\pages\meet\binders\saveChangeFormBinder.js" />
     <Content Include="app\static\js\pages\meet\binders\setActionBinder.js" />
     <Content Include="app\static\js\pages\meet\ctxState.js" />
@@ -162,8 +160,8 @@
     <Content Include="app\static\js\pages\round_table\ctxState.js" />
     <Content Include="app\static\js\pages\round_table\round_table.js" />
     <Content Include="app\templates\base.html" />
-    <Content Include="app\templates\form_meet_labor_content.html" />
-    <Content Include="app\templates\form_meet_population_content.html" />
+    <Content Include="app\templates\errors\404.html" />
+    <Content Include="app\templates\errors\500.html" />
     <Content Include="app\templates\index.html" />
     <Content Include="app\templates\list_protocols_old.html" />
     <Content Include="app\templates\login.html" />
@@ -184,7 +182,6 @@
     <Content Include="app\templates\round_table.html" />
     <Content Include="app\templates\round_table\form_round_table_content.html" />
     <Content Include="app\templates\round_table\protocol_round_table_content.html" />
-    <Content Include="app\test.tx" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

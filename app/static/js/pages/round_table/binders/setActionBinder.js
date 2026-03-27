@@ -7,14 +7,16 @@ export const SetActionBinder = {
 
         zone.addEventListener('click', (e) => {
             const btn = e.target.closest(`[data-role="${this.role}"]`);
-            console.log('SetActionBinder. addEventListener click. ZONE: ', zone, '\nBTN: ', btn);
+            //console.log('SetActionBinder. addEventListener click. ZONE: ', zone, '\nBTN: ', btn);
             if (!btn) return;
 
             e.preventDefault();
+            e.stopPropagation();
+
             const action = btn.dataset.action;
             const prot_num = btn.dataset.prot;
 
-            // Ñîáèðàåì ïàðàìåòðû
+            // Ð¡Ð¾Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹
             const params = new URLSearchParams();
             params.set('action', action);
             params.set('prot_num', prot_num);
@@ -35,10 +37,23 @@ export const SetActionBinder = {
                 params.set('refer', refer);
             }
 
-            console.log('SetActionBinder. params: ', params);
+            //console.log('SetActionBinder. params: ', params);
 
-            // Ïåðåõîä íà ñòðàíèöó
-            window.location.href = `/round_table/action?${params.toString()}`;
+            // ÐŸÐµÑ€ÐµÑ…Ð¾Ð´ Ð½Ð° ÑÑ‚Ñ€Ð°Ð½Ð¸Ñ†Ñƒ
+            if (action === 'edit') {
+                //console.log('SetActionBinder. EDIT. ACTION: ', action, ', params: ', params);
+                window.location.href = `/round_table/action?${params.toString()}`;
+            } else {
+                //console.log('SetActionBinder. ROUND_TABLE. POST. ACTION: ', action, ', params: ', params);
+                fetch('/round_table/action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params.toString()
+                }).then(() => {
+                    window.location.href = '/round_table/protocol';
+                });
+            }
+
         });
     }
 };

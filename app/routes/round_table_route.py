@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Request, Form
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi import Query
 from urllib.parse import urlencode
+from datetime import date
 
 from app.auth.dependencies import login_required
 from app.core.logger import log
@@ -30,6 +31,9 @@ def round_table_report(request: Request, user=Depends(login_required)):
     return ''
 
 
+##################################
+# Action. GET
+##################################
 @router.get('/round_table/action')
 def view_print_smi_action_get(
     request: Request,
@@ -43,27 +47,30 @@ def view_print_smi_action_get(
     refer: str = Query(None),
     description: str = Query(None),
 ):
-    log.info(f'GET /print-smi/action. action: {action}, top_level: {user.top_level}')
+    log.debug(f'ROUND_TABLE. GET. action: {action}, top_level: {user.top_level}')
     if action != "edit" or user.top_level>0:
         return RedirectResponse(url=request.url_for("round_table_protocol"))
 
     params = {
         "prot_num": prot_num,
-        "event_date": event_date,
+        "event_date": event_date or date.today(),
         "rfbn_id": rfbn_id,
         "participants": participants,
         "refer": refer,
         "description": description,
     }
     clean_params = {k: v for k, v in params.items() if v is not None}
-    log.info(f'GET /print-smi/action. clean_params: {clean_params}')
+    log.debug(f'ROUND_TABLE. GET. clean_params: {clean_params}')
     return RedirectResponse( url=f"{request.url_for('round_table_form')}?{urlencode(clean_params)}" )
 
-
+##################################
+# Action. POST
+##################################
 @router.post('/round_table/action')
 def view_round_table_action_post(
     request: Request,
     user=Depends(login_required),
+
     action: str = Form(...),
     prot_num: str = Form(...),
 ):
@@ -74,7 +81,7 @@ def view_round_table_action_post(
     }
     # здесь action: approved, delete
     set_action(
-        'ROUNDTABLE ACTION',
+        'ROUND_TABLE ACTION',
         'begin round_table.set_action(:action, :prot_num, :top_level); end;',
         params
     )
@@ -87,6 +94,9 @@ def view_round_table_action_post(
     )
 
 
+##########################
+# GET
+##########################
 @router.get('/round_table/form', response_class=HTMLResponse, 
             name="round_table_form")
 async def view_form_print_smi_get(
@@ -104,6 +114,7 @@ async def view_form_print_smi_get(
     # Собираем данные формы
     form = {
         "prot_num": prot_num,
+        "event_date":  event_date or date.today(),
         "rfbn_id": rfbn_id,
         "participants": participants,
         "refer": refer,
@@ -133,6 +144,9 @@ async def view_form_print_smi_get(
     )
 
 
+##########################
+# POST
+##########################
 @router.post('/round_table/form', response_class=HTMLResponse)
 async def view_form_round_table_post(
     request: Request,
@@ -180,15 +194,18 @@ async def view_form_round_table_post(
         }
     )
 
-
+##################################
+# PROTOCOL
+##################################
 @router.get('/round_table/protocol', response_class=HTMLResponse, 
-            dependencies=[Depends(login_required)], 
-            name='round_table_protocol')
+            dependencies=[Depends(login_required)], name='round_table_protocol')
 async def view_get_round_table_protocol(
     request: Request,
-    period: str | None = None,
     ctx=Depends(template_context),
+
+    period: str | None = None,
 ):
+    log.info(f'ROUND_TABLE PROTOCOL. CHECK PERIOD. {period} : {request.session.get("period", "")}')
     if period:
         request.session["period"] = period
     else:
@@ -201,6 +218,7 @@ async def view_get_round_table_protocol(
             'top_view': request.state.user.top_view,
             'period': period,
         }
+        log.debug(f'RADIO. PROTOCOL. params: {params}')
         rows = get_rows(params)
 
     return request.app.state.templates.TemplateResponse(

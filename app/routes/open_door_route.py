@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Request, Form
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi import Query
 from urllib.parse import urlencode
+from datetime import date
 
 from app.auth.dependencies import login_required
 from app.core.logger import log
@@ -30,7 +31,10 @@ def open_door_report(request: Request, user=Depends(login_required)):
     return ''
 
 
-@router.get('/open-door/action')
+##################################
+# Action. GET
+##################################
+@router.get('/open_door/action')
 def view_open_door_action_get(
     request: Request,
     user=Depends(login_required),
@@ -44,13 +48,13 @@ def view_open_door_action_get(
     event_place:  str = Query(None),
     refer:  str = Query(None)
 ):
-    log.info(f'GET /open_door/action. action: {action}, top_level: {user.top_level}')
     if action != "edit" or user.top_level>0:
+        log.debug(f'----->\nOPEN_DOOR. GET  ACTION: action != edit\n\taction: {action}\n\ttop_level: {user.top_level}\n<-----')
         return RedirectResponse(url=request.url_for("open_door_protocol"))
 
     params = {
         "prot_num": prot_num,
-        "event_date": event_date,
+        "event_date": event_date or date.today(),
         "rfbn_id": rfbn_id,
         "participants": participants,
         "smi": smi,
@@ -58,14 +62,18 @@ def view_open_door_action_get(
         "refer": refer
     }
     clean_params = {k: v for k, v in params.items() if v is not None}
-    log.info(f'GET /open_door/action. clean_params: {clean_params}')
+    log.debug(f'OPEN_DOOR. GET. clean_params: {clean_params}')
     return RedirectResponse( url=f"{request.url_for('open_door_form')}?{urlencode(clean_params)}" )
 
 
+##################################
+# Action. POST
+##################################
 @router.post('/open_door/action')
 def view_open_door_action_post(
     request: Request,
     user=Depends(login_required),
+
     action: str = Form(...),
     prot_num: str = Form(...),
 ):
@@ -74,14 +82,17 @@ def view_open_door_action_post(
         "prot_num": prot_num,
         "top_level": user.top_level,
     }
+    log.info(f'OPEN DOOR ACTION POST → {params}')
+
     # здесь action: approved, delete
     set_action( 'OPEN DOOR', 'begin open_door.set_action(:action, :prot_num, :top_level); end;', params )
-
-    log.info(f'OPEN DOOR ACTION POST → {params}')
 
     return RedirectResponse( url=request.url_for("open_door_protocol"), status_code=303 )
 
 
+##########################
+# GET
+##########################
 @router.get('/open_door/form', response_class=HTMLResponse, name="open_door_form")
 async def view_form_open_door_get(
     request: Request,
@@ -99,6 +110,7 @@ async def view_form_open_door_get(
     # Собираем данные формы
     form = {
         "prot_num": prot_num,
+        "event_date":  event_date or date.today(),
         "rfbn_id": rfbn_id,
         "participants": participants,
         "smi": smi,
@@ -129,10 +141,14 @@ async def view_form_open_door_get(
     )
 
 
+##########################
+# POST
+##########################
 @router.post('/open_door/form', response_class=HTMLResponse)
 async def view_form_open_door_post(
     request: Request,
     user=Depends(login_required),
+    ctx=Depends(template_context),
 
     prot_num: str | None = Form(None),
     event_date: str = Form(...),
@@ -155,17 +171,16 @@ async def view_form_open_door_post(
     }
 
     if prot_num:
-        # Новая запись
-        add(form)
-        message = "Информация успешно сохранена!"
-        log.info(f'POST FORM OPEN DOOR. ADD: {form}')
-
-    if prot_num:
         # Редактирование
         form["prot_num"] = prot_num
         upd(form)
         log.info(f'POST FORM OPEN DOOR. UPDATE: {form}')
         return RedirectResponse( url=request.url_for("open_door_protocol"), status_code=303 )
+
+    # Новая запись
+    add(form)
+    message = "Информация успешно сохранена!"
+    log.info(f'POST FORM OPEN DOOR. ADD: {form}')
 
     return request.app.state.templates.TemplateResponse(
         "open_door.html",
@@ -181,13 +196,18 @@ async def view_form_open_door_post(
     )
 
 
+##################################
+# PROTOCOL
+##################################
 @router.get('/open_door/protocol', response_class=HTMLResponse, 
             dependencies=[Depends(login_required)], name='open_door_protocol')
 async def view_get_open_door_protocol(
     request: Request,
-    period: str | None = None,
     ctx=Depends(template_context),
+
+    period: str | None = None,
 ):
+    log.info(f'OPEN_DOOR PROTOCOL. incoming period. {period} : session period: {request.session.get("period", "")}')
     if period:
         request.session["period"] = period
     else:
@@ -200,6 +220,7 @@ async def view_get_open_door_protocol(
             'top_view': request.state.user.top_view,
             'period': period,
         }
+        log.info(f'OPEN_DOOR. PROTOCOL. params: {params}')
         rows = get_rows(params)
 
     return request.app.state.templates.TemplateResponse(

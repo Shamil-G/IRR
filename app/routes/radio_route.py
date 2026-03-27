@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Request, Form
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi import Query
 from urllib.parse import urlencode
+from datetime import date
 
 from app.auth.dependencies import login_required
 from app.core.logger import log
@@ -30,6 +31,9 @@ def radio_report(request: Request, user=Depends(login_required)):
     return ''
 
 
+##################################
+# Action. GET
+##################################
 @router.get('/radio/action')
 def view_radio_action_get(
     request: Request,
@@ -43,13 +47,13 @@ def view_radio_action_get(
     speaker: str = Query(''),
     description: str = Query(''),
 ):
+    log.info(f'RADIO ACTION. GET. Action: {action}, top_level: {user.top_level}')
     if action != "edit" or user.top_level>0:
-        log.info(f'RADIO ACTION. GET. Action: {action}, top_level: {user.top_level}')
         return RedirectResponse(url=request.url_for("radio_protocol"))
 
     params = {
         "prot_num": prot_num,
-        "event_date": event_date,
+        "event_date": event_date or date.today(),
         "rfbn_id": rfbn_id,
         "channel_name": channel_name,
         "speaker": speaker,
@@ -60,12 +64,15 @@ def view_radio_action_get(
     return RedirectResponse( url=f"{request.url_for('radio_form')}?{urlencode(clean_params)}" )
 
 
+##################################
+# Action. POST
+##################################
 @router.post('/radio/action')
 def view_radio_action_post(
     request: Request,
-    action: str = Form(...),
     user=Depends(login_required),
 
+    action: str = Form(...),
     prot_num: str = Form(...),
 ):
     params = {
@@ -87,7 +94,9 @@ def view_radio_action_post(
         status_code=303
     )
 
-
+##########################
+# GET
+##########################
 @router.get('/radio/form', response_class=HTMLResponse, 
             name='radio_form')
 def view_form_radio_get(    
@@ -106,6 +115,7 @@ def view_form_radio_get(
     message = ''
     form = {
         "prot_num": prot_num,
+        "event_date": event_date or date.today(),
         "rfbn_id": rfbn_id,
         "channel_name": channel_name,
         "speaker": speaker,
@@ -132,6 +142,9 @@ def view_form_radio_get(
     )
 
 
+##########################
+# POST
+##########################
 @router.post('/radio/form')
 async def view_form_radio_post(
     request: Request,
@@ -174,16 +187,18 @@ async def view_form_radio_post(
         }
     )
 
-
+##################################
+# PROTOCOL
+##################################
 @router.get('/radio/protocol', response_class=HTMLResponse, 
             dependencies=[Depends(login_required)], name='radio_protocol')
 async def view_get_radio_protocol(
     request: Request,
-    period: str | None = None,
     ctx=Depends(template_context),
+
+    period: str | None = None,
 ):
-    params ={}
-    log.info(f'RADIO PROTOCOL. CHECK PERIOD. {period} : {request.session.get("period", "")}')
+    log.info(f'RADIO PROTOCOL. incoming period. {period} : session period: {request.session.get("period", "")}')
     if period:
         request.session["period"] = period
     else:
@@ -196,10 +211,8 @@ async def view_get_radio_protocol(
             'top_view': request.state.user.top_view,
             'period': period,
         }
-        log.info(f'RADIO. PROTOCOL. params: {params}')
+        log.debug(f'RADIO. PROTOCOL. params: {params}')
         rows = get_rows(params)
-
-    log.info(f'RADIO. PROTOCOL. GET PAGE. PERIOD: {period}')
 
     return request.app.state.templates.TemplateResponse(
         "radio.html",

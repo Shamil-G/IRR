@@ -30,6 +30,7 @@
         <header id="scenario_FilterZone">
             <header-l style="font-size:20px">
                 <img class="img-logo" src="{{ url_for('static', path='img/logo-g.ico') }}">
+                <a>&emsp;{{ res_value('Информационно разъяснительная работа') }}</a>
             </header-l>
 
             <header-c>
@@ -38,11 +39,15 @@
             </header-c>
             <header-r>
                 <div>
-                    <a href="#" id="theme-toggle">
+                    <a href="#" id="theme-toggle" 
+                       class="img-style"
+                       style="font-size: 24px; line-height: 1; margin: 2px 2px; vertical-align: middle; text-decoration: none;"
+                       >🌙</a>
+                    <!--<a href="#" id="theme-toggle">
                         <img class="img-style"
                              id="theme-icon"
                              src="/static/img/dark-icon.png"
-                             style="width: 24px; height: 24px; border-radius: 18px; margin: 2px 2px; vertical-align: middle;" />
+                             style="width: 24px; height: 24px; border-radius: 18px; margin: 2px 2px; vertical-align: middle;" />-->
                     </a>
                 </div>
                 {% if lang == 'ru' %}
