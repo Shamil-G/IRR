@@ -24,19 +24,17 @@ async def logout(request: Request):
     user = request.state.user if hasattr(request.state, "user") else None
     if user:
         log.info(f"LOGOUT. USER: {user.username}, IP: {ip}")
-        username = request.session.get('username','')
 
     # return RedirectResponse("/login", status_code=302)
     session = request.session
-    log.info(f"LOGOUT. IP: {ip}, CLEAR SESSION: {session}")
     request.session.clear()
-    log.info(f"LOGOUT. IP: {ip}, STATUSSESSION: {session}")
+    log.debug(f"LOGOUT. IP: {ip}, CLEAR SESSION: {session}")
 
     # Уведомляем SSO‑сервер
     req_json = {"ip_addr": ip}
     resp = requests.post(f"{sso_server}/close", json=req_json)
 
-    log.info( f"LOGOUT close status: {resp.status_code} при закрытии сессии {username} на SSO")
+    log.info( f"LOGOUT close status: {resp.status_code} при закрытии сессии на SSO")
 
     if resp.status_code != 200:
         return RedirectResponse(url="/")
