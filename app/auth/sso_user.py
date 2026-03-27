@@ -1,3 +1,4 @@
+from fastapi import Request
 from app.core.ip_addr import ip_addr
 from app.core.logger import log
 from app.config.app_config import top_post, top_view, middle_post, work_post, tester
@@ -41,6 +42,26 @@ class SSO_User:
             self.rfbn_id = tester["rfbn_id"]
             self.top_level = tester["top_level"]
             self.top_view = tester["top_view"]
+
+    def restore_user(self, request: Request):
+        session=request.session
+
+        self.username = session.get("username", None)
+        if "username" not in session:
+            log.info(f"RESTORE_USER. USERNAME not in SESSION: {session}")
+            return None
+
+        self.fio = session.get("fio", "")
+        self.full_name = session.get("full_name", "")
+        self.dep_name = session.get("dep_name", "")
+        self.post = session.get("post", "")
+        self.roles = session.get("roles", "")
+        self.top_level = session.get("top_level", 0)
+        self.top_view = session.get("top_view", 0)
+        self.rfbn_id = session.get("rfbn_id", "")
+        self.ip_addr = session.get("ip_addr", "")
+        self.full_name = session.fio
+        return self
 
     def authenticate_and_init(self, src_user: dict, request):
         """

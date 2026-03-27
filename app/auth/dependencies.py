@@ -46,14 +46,7 @@ def try_auto_login(request: Request):
 
 
 def login_required(request: Request):
-    """
-    Аналог Flask login_required.
-    Берёт пользователя из request.session,
-    создаёт SSO_User и кладёт в request.state.user.
-    """
-
     session = request.session
-    log.info(f'---> login_required')
 
     if "username" not in session or 'roles' not in session:
         log.info(f'---> login_required. USERNAME not in SESSION: {session}')
@@ -62,4 +55,5 @@ def login_required(request: Request):
             log.info(f'---> login_required. try_auto_login: {status}')
             raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
 
+    request.state.user = SSO_User().restore_user(request)
     return request.state.user
