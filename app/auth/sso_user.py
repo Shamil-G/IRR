@@ -60,7 +60,7 @@ class SSO_User:
         self.top_view = session.get("top_view", 0)
         self.rfbn_id = session.get("rfbn_id", "")
         self.ip_addr = session.get("ip_addr", "")
-        self.full_name = session.fio
+        self.full_name = session.get("fio", "")
         return self
 
     def authenticate_and_init(self, src_user: dict, request):
