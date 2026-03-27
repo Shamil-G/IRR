@@ -1,2 +1,2 @@
-systemctl stop irr
-systemctl status -l irr
+systemctl stop irr-2
+systemctl status -l irr-2

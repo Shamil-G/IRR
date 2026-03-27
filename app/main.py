@@ -17,7 +17,7 @@ from app.core.inject_template import AuthRedirectMiddleware, template_context
 from app.auth.login_routes import router as login_router
 from app.routes import router as api_router
 from app.core.i18n import get_i18n_value
-
+from app.core.logger import log
 
 load_dotenv()
 
@@ -103,7 +103,12 @@ app.add_middleware(
 # ---------------------------------------------------------
 # 4. Static files
 # ---------------------------------------------------------
-app.mount( "/static", StaticFiles(directory="app/static"), name="static" )
+# app.mount( "/static", StaticFiles(directory="app/static"), name="static" )
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+log.info(f'Static BASE_DIR: {BASE_DIR}')
+app.mount("/static", StaticFiles(directory=f'{BASE_DIR}/static'), name="static")
 
 # ---------------------------------------------------------
 # 5. Routers with prefixes & tags
