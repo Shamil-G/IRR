@@ -1,0 +1,7 @@
+#systemctl get-default
+systemctl daemon-reload
+systemctl stop irr
+systemctl enable /home/irr/IRR/service/irr.service
+systemctl --now irr
+systemctl start irr
+systemctl status -l irr

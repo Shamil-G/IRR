@@ -1,0 +1,14 @@
+[Unit]
+Description=COURT-2025
+After=network.target
+
+[Service]
+Type=simple
+User=court
+Group=court
+WorkingDirectory=/home/irr/IRR
+Environment="PATH=/home/irr/IRR/venv/bin" "LD_LIBRARY_PATH=/home/oracle/client/21.3/lib" "ORACLE_HOME=/home/oracle/client/21.3"
+ExecStart=/home/irr/IRR/venv/bin/gunicorn
+
+[Install]
+WantedBy=multi-user.target

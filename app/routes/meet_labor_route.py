@@ -201,5 +201,5 @@ async def view_form_meet_labor_post(
         f"meeting_format={meeting_format}&"
         f"partners={partners_encoded}"
     )
-    log.info(f'LABOR ROUTE. POST. URL: {url}')
+    log.debug(f'LABOR ROUTE. POST. URL: {url}')
     return RedirectResponse(url=url, status_code=303)

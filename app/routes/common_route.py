@@ -39,7 +39,7 @@ async def view_organization_name(request: Request, user=login_required):
 @lru_cache(maxsize=32)
 def get_cached_rayons(rfbn_id: str):
     rayons = get_list_rayons(rfbn_id) or []
-    log.info(f"GET CACHED RAYONS for {rfbn_id}: {rayons}")
+    log.debug(f"GET CACHED RAYONS for {rfbn_id}: {rayons}")
     return {item["rfbn_id"]: item["name"] for item in rayons}
 
 
@@ -59,7 +59,7 @@ def category_to_english(nm: str) -> str:
 
 
 # -----------------------------
-# 4. /edit-protocol/<prot_num>
+# 4. /edit-protocol/<prot_num>  - obsolete ?!
 # -----------------------------
 @router.api_route("/edit-protocol/{prot_num}", methods=["GET", "POST"], response_class=HTMLResponse)
 async def protocol_form(
@@ -150,7 +150,7 @@ async def protocol_form(
     load_data["employee"] = user.fio
     load_data["prot_num"] = prot_num
 
-    log.info(f"EDIT PROTOCOL. POST. Files: {list_path}")
+    log.info(f"OBSOLUTE ! EDIT PROTOCOL. POST. Files: {list_path}")
 
     update_protocol(load_data)
 

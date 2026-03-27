@@ -73,7 +73,7 @@ async def view_get_meet_protocol(
             'period': period,
         }
         rows = get_rows(params)
-    log.info(f'MEET_PROTOCOL. \nperiod: {period}\nrows: {rows}')
+    log.debug(f'MEET_PROTOCOL. \nperiod: {period}\nrows: {rows}')
     return request.app.state.templates.TemplateResponse(
         "meet.html",
         {
@@ -85,56 +85,5 @@ async def view_get_meet_protocol(
         }
     )
 
-# @router.get('/meet/protocol', response_class=HTMLResponse, name='meet_protocol')
-# async def view_meet_protocol_get(
-#         request: Request, 
-#         period: str | None = None,
-#         user=Depends(login_required), 
-#         ctx=Depends(template_context), 
-#         ):
-#     if period:
-#         request.session["period"] = period
-#     else:
-#         period = request.session.get("period", "")
-
-#     return request.app.state.templates.TemplateResponse(
-#         "meet.html", { "request": request, **ctx, "active_tab": "protocol", "period": period,  }
-#     )
-
-
-# @router.post('/meet/protocol')
-# def view_meet_protocol_post( request: Request,  user=Depends(login_required),  
-#                              ctx=Depends(template_context), period: str = Form(...)  ):
-#     session = request.session
-#     session['period'] = period
-
-#     params = {'rfbn_id': user.rfbn_id[0:2], 'top_view': user.top_view, 'period': period} 
-#     rows = list_protocol(params)
-
-#     # if len(rows)==0:
-#     #     render_template('meet.html', data=rows, level=user.top_level)
-
-#     if user.top_view==0:
-#         list_regions = { user.rfbn_id: regions[user.rfbn_id] }
-#     else:
-#         list_regions=regions
-
-#     SIZE_MAP = { 'large': 'большой', 'medium': 'средний', 'small': 'малый' }
-
-#     log.info(f'MEET PROTOCOL. {len(rows)} : period: {period}, data: {data}')
-#     for p in rows:
-#         p['category'] = SIZE_MAP.get(p.get('category'), p.get('category') or '')
-
-#         if isinstance(p.get('partners'), str):
-#             p['partners'] = json.loads(p['partners'])
-#         else:
-#             p['partners'] = p.get('partners') or []
-
-#         if isinstance(p.get('path_photo'), str):
-#             p['path_photo'] = json.loads(p['path_photo'])
-#         else:
-#             p['path_photo'] = p.get('path_photo') or []
-
-#     return RedirectResponse( url="/meet/protocol", status_code=303, )
 
 

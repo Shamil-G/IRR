@@ -58,6 +58,7 @@
     <Compile Include="app\routes\smi_route.py" />
     <Compile Include="app\auth\sso_user.py" />
     <Compile Include="app\sso\user_login_sso.py" />
+    <Compile Include="gunicorn.conf.py" />
     <Compile Include="IRR.py" />
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +102,7 @@
     <Folder Include="app\sso\" />
     <Folder Include="app\routes\" />
     <Folder Include="app\services\" />
+    <Folder Include="service\" />
     <Folder Include="venv\" />
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +184,10 @@
     <Content Include="app\templates\round_table.html" />
     <Content Include="app\templates\round_table\form_round_table_content.html" />
     <Content Include="app\templates\round_table\protocol_round_table_content.html" />
+    <Content Include="service\irr.service" />
+    <Content Include="service\init_service" />
+    <Content Include="service\reload" />
+    <Content Include="service\stop" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

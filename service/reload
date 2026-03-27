@@ -1,0 +1,4 @@
+systemctl daemon-reload
+systemctl stop irr
+systemctl start irr
+systemctl status -l irr
