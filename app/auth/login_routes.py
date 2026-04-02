@@ -26,9 +26,9 @@ async def logout(request: Request):
         log.info(f"LOGOUT. USER: {user.username}, IP: {ip}")
 
     # return RedirectResponse("/login", status_code=302)
-    session = request.session
-    request.session.clear()
-    log.debug(f"LOGOUT. IP: {ip}, CLEAR SESSION: {session}")
+    # session = request.session
+    # request.session.clear()
+    # log.debug(f"LOGOUT. IP: {ip}, CLEAR SESSION: {session}")
 
     # Уведомляем SSO‑сервер
     req_json = {"ip_addr": ip}

@@ -34,7 +34,7 @@ export const SetActionBinder = {
                 params.set('name', name);
                 params.set('participants', participants);
                 params.set('description', description);
-                params.set('refer', refer);
+                if (refer ) params.set('refer', refer);
             }
 
             //console.log('SetActionBinder. params: ', params);

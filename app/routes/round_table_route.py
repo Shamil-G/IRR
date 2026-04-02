@@ -157,7 +157,7 @@ async def view_form_round_table_post(
     event_date: str = Form(...),
     rfbn_id: str = Form(...),
     participants: str = Form(...),
-    refer: str = Form(...),
+    refer: str = Form(""),
     description: str = Form(...),
 ):
     message=''
@@ -182,7 +182,7 @@ async def view_form_round_table_post(
     message = "Информация успешно сохранена!"
 
     return request.app.state.templates.TemplateResponse(
-        "print_smi.html",
+        "round_table.html",
         {
             "request": request,
             "active_tab": "form",

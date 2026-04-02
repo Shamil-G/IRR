@@ -21,6 +21,13 @@ router = APIRouter()
 def view_print_smi(request: Request, ctx=Depends(template_context)):
     return request.app.state.templates.TemplateResponse("print_smi.html", {"request": request, **ctx})
 
+@router.get('/print-smi/report')
+def radio_report(request: Request, user=Depends(login_required)):
+    session = request.session
+    if 'period' in session:
+        params = {'rfbn_id': user.rfbn_id[0:2], 'period': session['period']}
+        return report_01(params)
+    return ''
 
 @router.get('/print-smi/action')
 def view_print_smi_action_get(

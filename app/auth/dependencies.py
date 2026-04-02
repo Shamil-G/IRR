@@ -11,7 +11,7 @@ from app.config.app_config import sso_server
 # -----------------------------
 # 3. Авто‑логин через SSO /check
 # -----------------------------
-def try_auto_login(request: Request):
+def check_login(request: Request):
     ip = ip_addr(request)
     req_json = {"ip_addr": ip}
     resp = requests.post(f"{sso_server}/check", json=req_json)
@@ -19,20 +19,21 @@ def try_auto_login(request: Request):
     log.info(f"LOGIN CHECK → {resp}")
 
     if resp.status_code != 200:
-        return False
+        return None
 
     resp_json = resp.json()
     log.info(f"LOGIN GET. resp_json: {resp_json}")
 
     if resp_json.get("status") != 200:
         log.info(f"Try auto login → USER {ip_addr(request)} not registered")
-        return False
-
+        return None
+        
     json_user = resp_json["user"]
     log.info(f"LOGIN GET. json_user: {json_user}")
+    return json_user
 
-    # request.session["username"] = json_user["login_name"]
 
+def try_auto_login(request: Request, json_user):
     user = SSO_User().authenticate_and_init(json_user, request)
     if not user:
         log.info("Try auto login → user object empty")
@@ -46,6 +47,12 @@ def try_auto_login(request: Request):
 
 
 def login_required(request: Request):
+
+    json_user = check_login(request)
+    if not json_user:
+        log.info(f'---> login_required. user out of session')
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
+
     session = request.session
 
     if "username" not in session or 'roles' not in session:
@@ -55,5 +62,10 @@ def login_required(request: Request):
             log.info(f'---> login_required. try_auto_login: {status}')
             raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
 
-    request.state.user = SSO_User().restore_user(request)
+    user = SSO_User().restore_user(request)
+    if not user:
+        raise HTTPException(HTTP_401_UNAUTHORIZED)
+
+    request.state.user = user
     return request.state.user
+
