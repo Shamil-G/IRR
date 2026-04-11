@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -15,6 +15,7 @@ import json
 
 from app.core.inject_template import AuthRedirectMiddleware, template_context
 from app.auth.login_routes import router as login_router
+from app.auth.dependencies import login_required
 from app.routes import router as api_router
 from app.core.i18n import get_i18n_value
 from app.core.logger import log
@@ -143,7 +144,7 @@ def server_error(request: Request, exc):
 # ---------------------------------------------------------
 # 7. Root
 # ---------------------------------------------------------
-@app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse, dependencies=[Depends(login_required)])
 def root(request: Request):
     return templates.TemplateResponse(
         "index.html",

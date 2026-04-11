@@ -20,7 +20,7 @@
 </div>-->
 <form class="form_login" method="POST" action="/login">
     <div>
-        <input style="margin-left: 0px" class="input_s" name="username" type="text" placeholder="{{res_value('LOGIN_INFO')}}" autocomplete="username">
+        <input style="margin-left: 0px" class="input_s" name="username" type="text" placeholder="{{res_value('LOGIN_INFO')}}" value="{{ username if username }}" autocomplete="username">
     </div>
     <div style="margin-top: 9px">
         <input style="margin-left: 0px" class="input_s" type="password" name="password" placeholder="{{res_value('PASSWORD_INFO')}}">

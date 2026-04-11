@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, status
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi import Form
 
@@ -15,26 +15,32 @@ from app.core.inject_template import template_context, get_lang
 
 router = APIRouter()
 
+
 # -----------------------------
 # 1. Аналог Flask logout
 # -----------------------------
 @router.get("/logout")
 async def logout(request: Request):
     ip = ip_addr(request)
-    user = request.state.user if hasattr(request.state, "user") else None
-    if user:
-        log.info(f"LOGOUT. USER: {user.username}, IP: {ip}")
+    req_json = {"ip_addr": ip}
 
-    # return RedirectResponse("/login", status_code=302)
-    # session = request.session
-    # request.session.clear()
-    # log.debug(f"LOGOUT. IP: {ip}, CLEAR SESSION: {session}")
+    session = request.session
+    
+    log.info(f'*** logout session')
+    if 'login_name' in session:
+        req_json["login_name"] = session.get('login_name')
+        log.info( f"---\nLOGOUT req_json: {req_json}\n---")
+
+    # Очистка данных сессии (если используешь starlette session middleware)
+    if "username" in request.session:
+        request.session.pop("username")
+    if "password" in request.session:
+        request.session.pop("password")
+    if "info" in request.session:
+        request.session.pop("info")
 
     # Уведомляем SSO‑сервер
-    req_json = {"ip_addr": ip}
     resp = requests.post(f"{sso_server}/close", json=req_json)
-
-    log.info( f"LOGOUT close status: {resp.status_code} при закрытии сессии на SSO")
 
     if resp.status_code != 200:
         return RedirectResponse(url="/")
@@ -47,7 +53,7 @@ async def logout(request: Request):
             f"Статус: {resp_json.get('status')} / {ip}"
         )
 
-    return RedirectResponse(url="/")
+    return RedirectResponse(url=request.url_for("login"), status_code=status.HTTP_302_FOUND)
 
 # -----------------------------
 # 3. Подключение middleware в main.py
@@ -80,7 +86,7 @@ async def login_submit(
         "ip_addr": ip_addr(request),
     }
 
-    log.debug(f"LOGIN_PAGE. POST. REQUEST JSON: {req_json}")
+    log.info(f"LOGIN_PAGE. POST. REQUEST JSON: {req_json}")
 
     resp = requests.post(f"{sso_server}/login", json=req_json)
     
@@ -109,19 +115,20 @@ async def login_submit(
             {"request": request, 
              "user": None,
              "info": "Неверна Фамилия (или ИИН) или пароль",
-             **ctx
+             **ctx,
+             'username': username
             },
         )
 
     # JSON получили
     json_user = resp_json["user"]
-    log.info(f"LOGIN POST. json_user: {json_user}")
+    log.debug(f"LOGIN POST. json_user: {json_user}")
    
     # -----------------------------
     # Создание SSO_User
     # -----------------------------
     if json_user:
-        log.debug(f"LOGIN. json_user: {json_user}")
+        # log.info(f"LOGIN. json_user: {json_user}")
         # Проверяем роли и кладем их в сессию
         user = SSO_User().authenticate_and_init(json_user, request)
         
@@ -136,7 +143,8 @@ async def login_submit(
                 {"request": request, 
                  "user": None,
                  "info": "Неверна Фамилия (или ИИН) или пароль",
-                 **ctx
+                 **ctx,
+                'username': username
                 },
             )
         

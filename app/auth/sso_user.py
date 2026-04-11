@@ -5,7 +5,7 @@ from app.config.app_config import top_post, top_view, middle_post, work_post, te
 
 
 SECURITY_KEYS = {
-    "username",
+    "login_name",
     "fio",
     "full_name",
     "dep_name",
@@ -25,7 +25,7 @@ class SSO_User:
     """
 
     def __init__(self):
-        self.username = None
+        self.login_name = None
         self.src_user = None
         self.post = ""
         self.dep_name = ""
@@ -38,7 +38,7 @@ class SSO_User:
         self.ip_addr = ""
 
     def check_tester(self):
-        if "login_name" in tester and tester["login_name"] == self.username:
+        if "login_name" in tester and tester["login_name"] == self.login_name:
             self.rfbn_id = tester["rfbn_id"]
             self.top_level = tester["top_level"]
             self.top_view = tester["top_view"]
@@ -46,9 +46,9 @@ class SSO_User:
     def restore_user(self, request: Request):
         session=request.session
 
-        self.username = session.get("username", None)
-        if "username" not in session:
-            log.info(f"RESTORE_USER. USERNAME not in SESSION: {session}")
+        self.login_name = session.get("login_name", None)
+        if "login_name" not in session:
+            log.info(f"RESTORE_USER. LOGIN_NAME not in SESSION: {session}")
             return None
 
         self.fio = session.get("fio", "")
@@ -73,18 +73,18 @@ class SSO_User:
         self.src_user = src_user
 
         if not src_user or "login_name" not in src_user:
-            log.info(f"SSO FAIL. USERNAME: {src_user}, ip_addr: {ip}")
+            log.info(f"SSO FAIL. LOGIN_NAME: {src_user}, ip_addr: {ip}")
             return None
 
         log.debug(f"SSO_USER. src_user: {src_user}")
 
-        self.username = src_user["login_name"]
+        self.login_name = src_user["login_name"]
 
         # Проверка обязательных полей
         required = ["fio", "dep_name", "post"]
         for field in required:
             if field not in src_user:
-                log.info(f"SSO FAIL. USER {self.username}: missing {field}")
+                log.info(f"SSO FAIL. USER {self.login_name}: missing {field}")
                 return None
 
         # Основные поля
@@ -106,15 +106,15 @@ class SSO_User:
 
         log.info(
             f"---> SSO SUCCESS\n"
-            f"\tUSERNAME: {self.username}\n"
-            f"\tIP_ADDR: {self.ip_addr}\n"
-            f"\tFIO: {self.fio}\n"
-            f"\tROLES: {self.roles}\n"
-            f"\tPOST: {self.post}\n"
-            f"\tTOP_VIEW: {self.top_view}\n"
-            f"\tTOP_LEVEL: {self.top_level}\n"
-            f"\tRFBN: {self.rfbn_id}\n"
-            f"\tDEP_NAME: {self.dep_name}\n<---"
+            f"\tLOGIN_NAME:\t{self.login_name}"
+            f"\tTOP_VIEW:\t{self.top_view}"
+            f"\tFIO:\t{self.fio}\n"
+            f"\tIP_ADDR:\t{self.ip_addr}"
+            f"\tTOP_LEVEL:\t{self.top_level}"
+            f"\tPOST:\t{self.post}\n"
+            f"\tROLES:\t\t{self.roles}"
+            f"\tRFBN:\t\t{self.rfbn_id}\n"
+            f"\tDEP_NAME\t{self.dep_name}\n<---"
         )
 
         return self
@@ -125,7 +125,7 @@ class SSO_User:
         for key in SECURITY_KEYS:
             session.pop(key, None)
 
-        session["username"] = self.username
+        session["login_name"] = self.login_name
         session["fio"] = self.fio
         session["full_name"] = self.full_name
         session["dep_name"] = self.dep_name
@@ -165,11 +165,11 @@ class SSO_User:
             if "*" in list_work_dep or self.dep_name in list_work_dep:
                 self.roles = "Operator"
             else:
-                log.info(f"SSO. Undefined ROLE for: {self.username}")
+                log.info(f"SSO. Undefined ROLE for: {self.login_name}")
                 return None
 
     def is_authenticated(self):
-        log.info(f'Check is_authenticated {self.username}')
+        log.info(f'Check is_authenticated {self.login_name}')
         return bool(self.roles)
 
     def have_role(self, role_name):

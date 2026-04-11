@@ -36,8 +36,8 @@ async def view_root(
 async def set_language(lang: str, request: Request):
     session = request.session
 
-    log.debug(f"Set language ? {lang}, previous: {session.get('language')}")
-    session["language"] = lang
+    log.debug(f"Set language ? {lang}, previous: {session.get('lang')}")
+    session["lang"] = lang
 
     ref = request.headers.get("referer")
     log.debug(f"Set LANGUAGE. Referer: {ref}")
